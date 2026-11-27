@@ -1,5 +1,6 @@
 import pytest
 from src.engine import MathEngine
+from src.ui_components import _draw_player
 
 ALL_STREAMS = [
     "Class 1 (Add & Subtract ≤ 10)",
@@ -57,3 +58,10 @@ def test_btech_civil_positive_values():
         )
         if "Cantilever" in prob.question or "Compressive Stress" in prob.question:
             assert int(prob.answer) > 0
+
+
+def test_ui_player_svg_generation():
+    svg = _draw_player(350.0, "#2563eb", facing_left=True)
+    assert "<circle" in svg
+    assert "#2563eb" in svg
+    assert "rotate(-14" in svg
