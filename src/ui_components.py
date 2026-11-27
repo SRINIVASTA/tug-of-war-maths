@@ -6,6 +6,42 @@ def inject_smartboard_css():
     st.markdown(
         """
         <style>
+        /* Hide Share, Star, Edit, GitHub icon, and Three-Dots Menu */
+        [data-testid="stToolbar"] {
+            visibility: hidden !important;
+            display: none !important;
+        }
+        [data-testid="stDecoration"] {
+            display: none !important;
+        }
+        #MainMenu {
+            visibility: hidden !important;
+            display: none !important;
+        }
+        footer {
+            visibility: hidden !important;
+            display: none !important;
+        }
+        header[data-testid="stHeader"] {
+            background: transparent !important;
+        }
+
+        /* Hide Streamlit Cloud "Manage app" & Viewer Badges */
+        [data-testid="manage-app-button"],
+        .stAppDeployButton,
+        div[class*="viewerBadge"],
+        button[title="Manage app"] {
+            visibility: hidden !important;
+            display: none !important;
+        }
+
+        /* Keep sidebar open/close arrow visible for teachers */
+        [data-testid="stSidebarCollapsedControl"] {
+            visibility: visible !important;
+            display: flex !important;
+        }
+
+        /* Large Smartboard Answer Buttons */
         div.stButton > button {
             height: 85px;
             font-size: 2.2rem !important;
