@@ -10,7 +10,8 @@ ALL_STREAMS = [
     "Inter - MEC / CEC (Commerce, Economics & Stats)",
     "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)",
     "B.Tech - ECE / EEE (Circuits, Signals & Laplace)",
-    "B.Tech - Mechanical / Civil (Thermo, Mechanics & Fluid)",
+    "B.Tech - Mechanical (Thermo, Fluids & Machine Design)",
+    "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)",
 ]
 
 
@@ -33,13 +34,26 @@ def test_class_1_no_negatives():
 
 def test_btech_cse_binary_format():
     for _ in range(50):
-        prob = MathEngine.generate("B.Tech - CSE / IT (Discrete Math, Binary & Big-O)")
+        prob = MathEngine.generate(
+            "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)"
+        )
         if "to Binary" in prob.question:
             assert set(prob.answer).issubset({"0", "1"})
 
 
 def test_btech_ece_laplace_format():
     for _ in range(50):
-        prob = MathEngine.generate("B.Tech - ECE / EEE (Circuits, Signals & Laplace)")
+        prob = MathEngine.generate(
+            "B.Tech - ECE / EEE (Circuits, Signals & Laplace)"
+        )
         if "Laplace" in prob.question:
             assert prob.answer.startswith("1/(s+")
+
+
+def test_btech_civil_positive_values():
+    for _ in range(50):
+        prob = MathEngine.generate(
+            "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)"
+        )
+        if "Cantilever" in prob.question or "Compressive Stress" in prob.question:
+            assert int(prob.answer) > 0
