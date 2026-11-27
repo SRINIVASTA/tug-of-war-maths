@@ -107,3 +107,33 @@ def render_arena(rope_pos: int, win_limit: int, team_a: str, team_b: str):
     </div>
     """
     components.html(full_html, height=195)
+
+def render_footer():
+    footer_html = """
+    <div style="margin-top: 40px; padding: 16px 0; border-top: 2px solid #e2e8f0; text-align: center; font-family: sans-serif;">
+        <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 10px; font-weight: 600;">
+            Built by T A Srinivas • Connect & Explore More Projects
+        </p>
+        <div style="display: flex; justify-content: center; gap: 24px; align-items: center;">
+            <a href="https://www.linkedin.com/in/srinivas-t-a-557637119/" target="_blank" title="LinkedIn Profile" style="text-decoration: none; color: #0a66c2; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1rem;">
+                <svg xmlns="http://w3.org" width="22" height="22" viewBox="0 0 24 24" fill="#0a66c2">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                </svg>
+                LinkedIn
+            </a>
+            <a href="mailto:tasrinivass@gmail.com" title="Send Email" style="text-decoration: none; color: #dc2626; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1rem;">
+                <svg xmlns="http://w3.org" width="22" height="22" viewBox="0 0 24 24" fill="#dc2626">
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                Email
+            </a>
+            <a href="https://srinivasta.github.io/" target="_blank" title="Portfolio Website" style="text-decoration: none; color: #2563eb; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1rem;">
+                <svg xmlns="http://w3.org" width="22" height="22" viewBox="0 0 24 24" fill="#2563eb">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+                Website
+            </a>
+        </div>
+    </div>
+    """
+    st.markdown(footer_html, unsafe_allow_html=True)
