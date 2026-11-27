@@ -65,6 +65,12 @@ with st.sidebar:
         st.session_state.q_start_b = time.time()
         st.rerun()
 
+    if st.button("🧹 Clear Cache & Reset All", use_container_width=True):
+        st.cache_data.clear()
+        st.cache_resource.clear()
+        st.session_state.clear()
+        st.rerun()
+
     st.divider()
     if st.session_state.logs:
         df_logs = pd.DataFrame(st.session_state.logs)
