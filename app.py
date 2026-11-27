@@ -9,13 +9,21 @@ st.set_page_config(
 )
 inject_smartboard_css()
 
+GRADE_OPTIONS = [
+    "Class 1 (Add & Subtract ≤ 10)",
+    "Class 2-3 (Two-Digit & Intro Mult)",
+    "Class 4-5 (Multiplication & Division)",
+    "Class 6-7 (Fractions & Percentages)",
+    "Class 8 (Linear Equations)",
+]
+
 if "initialized" not in st.session_state:
     st.session_state.initialized = True
     st.session_state.rope_pos = 0
     st.session_state.win_limit = 5
     st.session_state.team_a_name = "Blue Tigers"
     st.session_state.team_b_name = "Orange Lions"
-    st.session_state.grade = "Grade 1 (Addition/Subtraction ≤ 10)"
+    st.session_state.grade = GRADE_OPTIONS
     st.session_state.prob_a = MathEngine.generate(st.session_state.grade)
     st.session_state.prob_b = MathEngine.generate(st.session_state.grade)
     st.session_state.logs = []
@@ -31,14 +39,7 @@ with st.sidebar:
         "Team B Name", st.session_state.team_b_name
     )
 
-    selected_grade = st.selectbox(
-        "Curriculum Standard",
-        [
-            "Grade 1 (Addition/Subtraction ≤ 10)",
-            "Grade 2-3 (Two-Digit & Intro Mult)",
-            "Grade 4-5 (Multiplication Mastery)",
-        ],
-    )
+    selected_grade = st.selectbox("Select Class / Level", GRADE_OPTIONS)
     st.session_state.win_limit = st.slider("Pulls to Win", 3, 10, 5)
 
     if selected_grade != st.session_state.grade:
@@ -82,16 +83,17 @@ if abs(st.session_state.rope_pos) >= st.session_state.win_limit:
     st.stop()
 
 
-def handle_answer(team: str, chosen: int, problem, start_time: float):
+def handle_answer(team: str, chosen: str, problem, start_time: float):
     elapsed = round(time.time() - start_time, 2)
     is_correct = chosen == problem.answer
     st.session_state.logs.append({
         "Team": team,
+        "Topic": problem.topic,
         "Question": problem.question,
         "Chosen": chosen,
         "Correct": is_correct,
         "Response_Time_Sec": elapsed,
-        "Grade": st.session_state.grade,
+        "Class": st.session_state.grade,
     })
     if is_correct:
         st.session_state.rope_pos += (
@@ -115,11 +117,11 @@ col1, col_sep, col2 = st.columns([5, 0.5, 5])
 
 with col1:
     st.markdown(f"### 🔵 {st.session_state.team_a_name}")
-    st.markdown(f"# `{st.session_state.prob_a.question} = ?`")
+    st.markdown(f"## `{st.session_state.prob_a.question}`")
     btn_cols_a = st.columns(2)
     for idx, val in enumerate(st.session_state.prob_a.choices):
         if btn_cols_a[idx % 2].button(
-            str(val), key=f"a_{idx}", use_container_width=True
+            val, key=f"a_{idx}", use_container_width=True
         ):
             handle_answer(
                 st.session_state.team_a_name,
@@ -131,11 +133,11 @@ with col1:
 
 with col2:
     st.markdown(f"### 🟠 {st.session_state.team_b_name}")
-    st.markdown(f"# `{st.session_state.prob_b.question} = ?`")
+    st.markdown(f"## `{st.session_state.prob_b.question}`")
     btn_cols_b = st.columns(2)
     for idx, val in enumerate(st.session_state.prob_b.choices):
         if btn_cols_b[idx % 2].button(
-            str(val), key=f"b_{idx}", use_container_width=True
+            val, key=f"b_{idx}", use_container_width=True
         ):
             handle_answer(
                 st.session_state.team_b_name,
