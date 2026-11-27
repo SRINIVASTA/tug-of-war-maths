@@ -20,7 +20,8 @@ GRADE_OPTIONS = [
     "Inter - MEC / CEC (Commerce, Economics & Stats)",
     "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)",
     "B.Tech - ECE / EEE (Circuits, Signals & Laplace)",
-    "B.Tech - Mechanical / Civil (Thermo, Mechanics & Fluid)",
+    "B.Tech - Mechanical (Thermo, Fluids & Machine Design)",
+    "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)",
 ]
 
 if "initialized" not in st.session_state:
@@ -29,7 +30,7 @@ if "initialized" not in st.session_state:
     st.session_state.win_limit = 5
     st.session_state.team_a_name = "Blue Tigers"
     st.session_state.team_b_name = "Orange Lions"
-    st.session_state.grade = GRADE_OPTIONS
+    st.session_state.grade = GRADE_OPTIONS[0]
     st.session_state.prob_a = MathEngine.generate(st.session_state.grade)
     st.session_state.prob_b = MathEngine.generate(st.session_state.grade)
     st.session_state.logs = []
