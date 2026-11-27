@@ -2,7 +2,8 @@ import time
 import pandas as pd
 import streamlit as st
 from src.engine import MathEngine
-from src.ui_components import inject_smartboard_css, render_arena
+from src.ui_components import inject_smartboard_css, render_arena, render_footer
+
 
 st.set_page_config(
     page_title="Tug-of-War Maths & Engineering Arena",
@@ -173,3 +174,4 @@ with col2:
                 st.session_state.q_start_b,
             )
             st.rerun()
+render_footer()
