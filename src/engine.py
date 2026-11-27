@@ -187,8 +187,8 @@ class MathEngine:
                 q, ans, dist = random.choice(ece_bank)
                 return MathEngine._str_choices(q, ans, dist, "Electronics")
 
-        else:  # B.Tech - Mechanical / Civil (Thermo, Mechanics & Fluid)
-            mode = random.choice(["force", "stress_dynamic", "theory"])
+        elif level == "B.Tech - Mechanical (Thermo, Fluids & Machine Design)":
+            mode = random.choice(["force", "theory"])
             if mode == "force":
                 m = random.randint(5, 25)
                 a = random.randint(2, 10)
@@ -198,25 +198,47 @@ class MathEngine:
                     ans,
                     "Engg Mechanics",
                 )
+            mech_bank = [
+                ("Bernoulli's equation conserves", "Energy", ["Mass", "Momentum", "Viscosity"]),
+                ("Reynolds number > 4000 indicates", "Turbulent flow", ["Laminar flow", "Transitional", "Static"]),
+                ("Carnot efficiency depends only on", "Temperatures", ["Working fluid", "Pressure", "Volume"]),
+                ("Gear module (m) formula (D=pitch dia, T=teeth)", "D / T", ["T / D", "D × T", "πD / T"]),
+            ]
+            q, ans, dist = random.choice(mech_bank)
+            return MathEngine._str_choices(q, ans, dist, "Thermo & Fluids")
+
+        else:  # B.Tech - Civil (Structures, Geotech, Surveying & Concrete)
+            mode = random.choice(["beam_moment", "stress_dynamic", "theory"])
+            if mode == "beam_moment":
+                w = random.randint(4, 20)
+                l = random.randint(2, 8)
+                ans = int((w * (l**2)) / 2)
+                return MathEngine._int_choices(
+                    f"Max BM (kN·m) Cantilever: UDL={w}kN/m, L={l}m",
+                    ans,
+                    "Structural Analysis",
+                )
             elif mode == "stress_dynamic":
                 area = random.randint(2, 10)
                 stress = random.randint(10, 50)
                 force = area * stress
                 return MathEngine._int_choices(
-                    f"Stress (Pa): Force = {force}N, Area = {area}m²",
+                    f"Compressive Stress (MPa): Load={force}kN, Area={area}×10³mm²",
                     stress,
                     "Strength of Materials",
                 )
             else:
-                mech_bank = [
-                    ("Bernoulli's equation conserves", "Energy", ["Mass", "Momentum", "Viscosity"]),
-                    ("Reynolds number > 4000 indicates", "Turbulent flow", ["Laminar flow", "Transitional", "Static"]),
+                civil_bank = [
+                    ("Nominal mix ratio for M20 concrete", "1 : 1.5 : 3", ["1 : 2 : 4", "1 : 1 : 2", "1 : 3 : 6"]),
                     ("Bending moment at free end of cantilever", "0", ["WL", "WL/2", "WL²/2"]),
-                    ("Carnot efficiency depends only on", "Temperatures", ["Working fluid", "Pressure", "Volume"]),
+                    ("Max BM of simply supported beam (point load W at center)", "WL / 4", ["WL / 2", "WL / 8", "WL² / 8"]),
+                    ("Whole Circle Bearing (WCB) of South", "180°", ["90°", "270°", "360°"]),
+                    ("Instrument used to measure horizontal & vertical angles", "Theodolite", ["Dumpy Level", "Planimeter", "Clinometer"]),
+                    ("Void ratio (e) in terms of porosity (n)", "n / (1 - n)", ["n / (1 + n)", "1 - n", "n × (1 - n)"]),
                 ]
-                q, ans, dist = random.choice(mech_bank)
+                q, ans, dist = random.choice(civil_bank)
                 return MathEngine._str_choices(
-                    q, ans, dist, "Thermo & Fluid"
+                    q, ans, dist, "Geotech, Survey & Concrete"
                 )
 
     @staticmethod
