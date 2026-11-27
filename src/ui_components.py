@@ -38,7 +38,7 @@ def render_arena(rope_pos: int, win_limit: int, team_a: str, team_b: str):
     center_x = 450 + (clamped_pos / win_limit) * 180
 
     team_a_offsets = [-95, -145, -195]
-    team_b_offsets =
+    team_b_offsets = [95, 145, 195]
 
     players_svg = ""
     for offset in team_a_offsets:
