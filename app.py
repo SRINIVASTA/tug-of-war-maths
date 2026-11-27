@@ -81,6 +81,13 @@ with st.sidebar:
             "text/csv",
             use_container_width=True,
         )
+st.markdown(
+    "<h1 style='text-align: center; margin-bottom: 0;'>🪢 Tug-of-War Maths & Engineering Arena</h1>"
+    "<p style='text-align: center; color: #64748b; font-size: 1.1rem; margin-top: 4px;'>"
+    "Solve faster • Pull the rope • Win the classroom challenge!</p>",
+    unsafe_allow_html=True,
+)
+
 render_arena(
     st.session_state.rope_pos,
     st.session_state.win_limit,
