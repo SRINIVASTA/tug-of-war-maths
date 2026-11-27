@@ -112,7 +112,7 @@ def render_footer():
     footer_html = """
     <div style="margin-top: 40px; padding: 16px 0; border-top: 2px solid #e2e8f0; text-align: center; font-family: sans-serif;">
         <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 10px; font-weight: 600;">
-            Built by T A Srinivas • Connect & Explore More Projects
+            Built by T A Srinivas • Tanakala AI Solutions
         </p>
         <div style="display: flex; justify-content: center; gap: 24px; align-items: center;">
             <a href="https://www.linkedin.com/in/srinivas-t-a-557637119/" target="_blank" title="LinkedIn Profile" style="text-decoration: none; color: #0a66c2; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 1rem;">
