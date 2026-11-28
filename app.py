@@ -14,6 +14,7 @@ st.set_page_config(
 inject_kiosk_css()
 
 STREAMS = (
+    "Brain Training - Logical Reasoning & IQ Puzzles",
     "Class 1 (Add & Subtract ≤ 10)",
     "Class 2-5 (Operations & Mult/Div)",
     "Class 6-8 (Percentages & Algebra)",
