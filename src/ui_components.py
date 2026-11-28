@@ -188,15 +188,17 @@ def render_arena_svg(
     return svg_html
 
 def render_footer() -> None:
-    """Renders the fixed responsive bottom branding bar."""
-    st.markdown(
-        """
-        <div class="brand-footer">
-            🪢 <strong>Tug-of-War Maths &amp; Engineering Arena</strong> • Built by <strong>T A Srinivas (Srinivasta)</strong> • Tanakala AI Solutions
-        </div>
-        """,
-        unsafe_allow_html=True,
+    """Renders the fixed responsive bottom branding bar with contact links."""
+    footer_html = (
+        '<div class="brand-footer">'
+        '🪢 <strong>Tug-of-War Maths &amp; Engineering Arena</strong> • '
+        'Built by <strong>T A Srinivas (Srinivasta)</strong> • Tanakala AI Solutions | '
+        '<a href="https://www.linkedin.com/in/srinivas-t-a-557637119/" target="_blank" rel="noopener noreferrer">LinkedIn</a> • '
+        '<a href="https://srinivasta.github.io/" target="_blank" rel="noopener noreferrer">Website</a> • '
+        '<a href="mailto:tasrinivass@gmail.com">Email</a>'
+        '</div>'
     )
+    st.markdown(footer_html, unsafe_allow_html=True)
 # Backward-compatible aliases for app.py and tests/test_engine.py
 inject_smartboard_css = inject_kiosk_css
 render_arena = render_arena_svg
