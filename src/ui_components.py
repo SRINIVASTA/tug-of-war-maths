@@ -242,3 +242,6 @@ def render_footer() -> None:
         """,
         unsafe_allow_html=True,
     )
+# Backward-compatible aliases for app.py and tests/test_engine.py
+inject_smartboard_css = inject_kiosk_css
+render_arena = render_arena_svg
