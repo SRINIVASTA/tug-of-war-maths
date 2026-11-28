@@ -295,6 +295,47 @@ class MathEngine:
             q, ans, dist = random.choice(civil_bank)
             return MathEngine._str_choices(q, ans, dist, "Civil Engineering")
 
+        # --- BRAIN TRAINING & LOGICAL REASONING ---
+        elif level == "Brain Training - Logical Reasoning & IQ Puzzles":
+            mode = random.choice(["series", "coding", "iq_bank"])
+            if mode == "series":
+                series_type = random.choice(["sq_plus", "arith", "geom"])
+                if series_type == "sq_plus":
+                    start = random.randint(1, 5)
+                    seq = [n * n + 1 for n in range(start, start + 4)]
+                    ans = (start + 4) ** 2 + 1
+                elif series_type == "arith":
+                    start = random.randint(2, 12)
+                    diff = random.randint(3, 9)
+                    seq = [start + i * diff for i in range(4)]
+                    ans = start + 4 * diff
+                else:
+                    start = random.randint(1, 4)
+                    seq = [start * (2**i) for i in range(4)]
+                    ans = start * 16
+                q = f"Next in series: {', '.join(map(str, seq))}, ?"
+                return MathEngine._int_choices(q, ans, "Number Series")
+            elif mode == "coding":
+                word = random.choice(["CAT", "BAT", "DOG", "SUN", "MAP", "PEN", "BOX", "WIN"])
+                ans = sum(ord(ch) - 64 for ch in word)
+                return MathEngine._int_choices(
+                    f"If A=1, B=2..., value of '{word}' =",
+                    ans,
+                    "Coding-Decoding",
+                )
+            else:
+                iq_bank = [
+                    ("Odd one out: 2, 3, 5, 9, 11", "9", ["2", "3", "11"]),
+                    ("Clock angle between hands at 3:00", "90°", ["60°", "120°", "180°"]),
+                    ("If 5 machines take 5 min for 5 widgets, 100 machines take?", "5 min", ["100 min", "20 min", "1 min"]),
+                    ("A farmer has 17 sheep; all but 9 die. How many are left?", "9", ["8", "17", "0"]),
+                    ("Which number comes next: 1, 1, 2, 3, 5, 8, ?", "13", ["11", "12", "15"]),
+                    ("Doctor : Hospital :: Teacher : ?", "School", ["Court", "Laboratory", "Bank"]),
+                    ("Mirror image time of 8:00 on analog clock", "4:00", ["8:00", "2:00", "10:00"]),
+                ]
+                q, ans, dist = random.choice(iq_bank)
+                return MathEngine._str_choices(q, ans, dist, "Logical & IQ Puzzles")
+
         else:
             raise ValueError(f"Unknown academic stream: {level}")
 
