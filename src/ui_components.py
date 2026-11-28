@@ -147,90 +147,45 @@ def render_arena_svg(
     """Generates and renders a responsive 6-player SVG tug-of-war arena."""
     safe_threshold = max(1, win_threshold)
     clamped_pos = max(-safe_threshold, min(safe_threshold, rope_pos))
-    # Map clamped rope position (-threshold to +threshold) to pixel shift (-150px to +150px)
     shift_x = int((clamped_pos / safe_threshold) * 150)
-    center_x = 450 + shift_x
 
-    svg_html = f"""
-    <div class="arena-wrapper">
-      <svg viewBox="0 0 900 210" xmlns="http://w3.org" preserveAspectRatio="xMidYMid meet">
-        <!-- Ground & Center Victory Line -->
-        <line x1="40" y1="175" x2="860" y2="175" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
-        <line x1="450" y1="35" x2="450" y2="185" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,6"/>
-        <text x="450" y="25" fill="#f87171" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">
-          VICTORY LINE
-        </text>
-
-        <!-- Team Labels -->
-        <text x="140" y="30" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">
-          {team_a_name}
-        </text>
-        <text x="760" y="30" fill="#fbbf24" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">
-          {team_b_name}
-        </text>
-
-        <!-- Moving Rope & Players Group -->
-        <g transform="translate({shift_x}, 0)">
-          <!-- Main Tug Rope -->
-          <line x1="150" y1="125" x2="750" y2="125" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>
-          <!-- Center Flag Marker -->
-          <polygon points="450,125 440,152 460,152" fill="#ef4444"/>
-          <circle cx="450" cy="125" r="7" fill="#ffffff" stroke="#ef4444" stroke-width="3"/>
-
-          <!-- TEAM A (3 Leaning Players - Cyan) -->
-          <g stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none">
-            <!-- Player A1 -->
-            <circle cx="210" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
-            <line x1="210" y1="97" x2="195" y2="138"/>
-            <line x1="203" y1="112" x2="232" y2="125"/>
-            <line x1="195" y1="138" x2="180" y2="173"/>
-            <line x1="195" y1="138" x2="215" y2="173"/>
-
-            <!-- Player A2 -->
-            <circle cx="275" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
-            <line x1="275" y1="97" x2="260" y2="138"/>
-            <line x1="268" y1="112" x2="297" y2="125"/>
-            <line x1="260" y1="138" x2="245" y2="173"/>
-            <line x1="260" y1="138" x2="280" y2="173"/>
-
-            <!-- Player A3 -->
-            <circle cx="340" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
-            <line x1="340" y1="97" x2="325" y2="138"/>
-            <line x1="333" y1="112" x2="362" y2="125"/>
-            <line x1="325" y1="138" x2="310" y2="173"/>
-            <line x1="325" y1="138" x2="345" y2="173"/>
-          </g>
-
-          <!-- TEAM B (3 Leaning Players - Amber) -->
-          <g stroke="#fbbf24" stroke-width="5" stroke-linecap="round" fill="none">
-            <!-- Player B1 -->
-            <circle cx="560" cy="85" r="12" fill="#f59e0b" stroke="none"/>
-            <line x1="560" y1="97" x2="575" y2="138"/>
-            <line x1="567" y1="112" x2="538" y2="125"/>
-            <line x1="575" y1="138" x2="555" y2="173"/>
-            <line x1="575" y1="138" x2="590" y2="173"/>
-
-            <!-- Player B2 -->
-            <circle cx="625" cy="85" r="12" fill="#f59e0b" stroke="none"/>
-            <line x1="625" y1="97" x2="640" y2="138"/>
-            <line x1="632" y1="112" x2="603" y2="125"/>
-            <line x1="640" y1="138" x2="620" y2="173"/>
-            <line x1="640" y1="138" x2="655" y2="173"/>
-
-            <!-- Player B3 -->
-            <circle cx="690" cy="85" r="12" fill="#f59e0b" stroke="none"/>
-            <line x1="690" y1="97" x2="705" y2="138"/>
-            <line x1="697" y1="112" x2="668" y2="125"/>
-            <line x1="705" y1="138" x2="685" y2="173"/>
-            <line x1="705" y1="138" x2="720" y2="173"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-    """
+    svg_html = (
+        f'<div class="arena-wrapper">'
+        f'<svg viewBox="0 0 900 210" xmlns="http://w3.org" preserveAspectRatio="xMidYMid meet">'
+        f'<line x1="40" y1="175" x2="860" y2="175" stroke="#334155" stroke-width="4" stroke-linecap="round"/>'
+        f'<line x1="450" y1="35" x2="450" y2="185" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,6"/>'
+        f'<text x="450" y="25" fill="#f87171" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">VICTORY LINE</text>'
+        f'<text x="140" y="30" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">{team_a_name}</text>'
+        f'<text x="760" y="30" fill="#fbbf24" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">{team_b_name}</text>'
+        f'<g transform="translate({shift_x}, 0)">'
+        f'<line x1="150" y1="125" x2="750" y2="125" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>'
+        f'<polygon points="450,125 440,152 460,152" fill="#ef4444"/>'
+        f'<circle cx="450" cy="125" r="7" fill="#ffffff" stroke="#ef4444" stroke-width="3"/>'
+        f'<g stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none">'
+        f'<circle cx="210" cy="85" r="12" fill="#0ea5e9" stroke="none"/>'
+        f'<line x1="210" y1="97" x2="195" y2="138"/><line x1="203" y1="112" x2="232" y2="125"/>'
+        f'<line x1="195" y1="138" x2="180" y2="173"/><line x1="195" y1="138" x2="215" y2="173"/>'
+        f'<circle cx="275" cy="85" r="12" fill="#0ea5e9" stroke="none"/>'
+        f'<line x1="275" y1="97" x2="260" y2="138"/><line x1="268" y1="112" x2="297" y2="125"/>'
+        f'<line x1="260" y1="138" x2="245" y2="173"/><line x1="260" y1="138" x2="280" y2="173"/>'
+        f'<circle cx="340" cy="85" r="12" fill="#0ea5e9" stroke="none"/>'
+        f'<line x1="340" y1="97" x2="325" y2="138"/><line x1="333" y1="112" x2="362" y2="125"/>'
+        f'<line x1="325" y1="138" x2="310" y2="173"/><line x1="325" y1="138" x2="345" y2="173"/>'
+        f'</g>'
+        f'<g stroke="#fbbf24" stroke-width="5" stroke-linecap="round" fill="none">'
+        f'<circle cx="560" cy="85" r="12" fill="#f59e0b" stroke="none"/>'
+        f'<line x1="560" y1="97" x2="575" y2="138"/><line x1="567" y1="112" x2="538" y2="125"/>'
+        f'<line x1="575" y1="138" x2="555" y2="173"/><line x1="575" y1="138" x2="590" y2="173"/>'
+        f'<circle cx="625" cy="85" r="12" fill="#f59e0b" stroke="none"/>'
+        f'<line x1="625" y1="97" x2="640" y2="138"/><line x1="632" y1="112" x2="603" y2="125"/>'
+        f'<line x1="640" y1="138" x2="620" y2="173"/><line x1="640" y1="138" x2="655" y2="173"/>'
+        f'<circle cx="690" cy="85" r="12" fill="#f59e0b" stroke="none"/>'
+        f'<line x1="690" y1="97" x2="705" y2="138"/><line x1="697" y1="112" x2="668" y2="125"/>'
+        f'<line x1="705" y1="138" x2="685" y2="173"/><line x1="705" y1="138" x2="720" y2="173"/>'
+        f'</g></g></svg></div>'
+    )
     st.markdown(svg_html, unsafe_allow_html=True)
     return svg_html
-
 
 def render_footer() -> None:
     """Renders the fixed responsive bottom branding bar."""
