@@ -15,7 +15,7 @@ class MathEngine:
 
     @staticmethod
     def generate(level: str) -> MathProblem:
-        # --- SCHOOL LEVELS (Class 1–8) ---
+        # --- SCHOOL LEVELS (Class 1–10) ---
         if level == "Class 1 (Add & Subtract ≤ 10)":
             a, b = random.randint(1, 10), random.randint(1, 10)
             op = random.choice(["+", "-"])
@@ -42,8 +42,8 @@ class MathEngine:
 
         elif level == "Class 6-8 (Percentages & Algebra)":
             if random.choice([True, False]):
-                pct = random.choice()
-                base = random.choice()
+                pct = random.choice([10, 20, 25, 50, 75])
+                base = random.choice([40, 60, 80, 100, 120, 200])
                 ans = int((pct / 100) * base)
                 return MathEngine._int_choices(
                     f"{pct}% of {base}", ans, "Percentages"
@@ -54,6 +54,36 @@ class MathEngine:
             return MathEngine._int_choices(
                 f"Solve x: {m}x + {c} = {m*x + c}", x, "Algebra"
             )
+
+        elif level == "Class 9-10 (Quadratics, Coord Geometry & Trig)":
+            mode = random.choice(["quad", "coord", "trig_10"])
+            if mode == "quad":
+                r1, r2 = random.randint(1, 6), random.randint(2, 7)
+                b_coef = -(r1 + r2)
+                c_coef = r1 * r2
+                ans = r1 + r2
+                return MathEngine._int_choices(
+                    f"Sum of roots: x² {b_coef}x + {c_coef} = 0",
+                    ans,
+                    "Quadratic Equations",
+                )
+            elif mode == "coord":
+                x, y = random.choice([(3, 4), (6, 8), (5, 12), (8, 15), (9, 12)])
+                ans = int((x**2 + y**2) ** 0.5)
+                return MathEngine._int_choices(
+                    f"Distance of ({x}, {y}) from origin",
+                    ans,
+                    "Coordinate Geometry",
+                )
+            else:
+                trig10_bank = [
+                    ("If sin(θ) = 3/5, find cos(θ)", "4/5", ["3/4", "5/3", "1/5"]),
+                    ("Value of 9·sec²A - 9·tan²A", "9", ["1", "0", "8"]),
+                    ("If tan(A) = 1, angle A is", "45°", ["30°", "60°", "90°"]),
+                    ("Probability of getting Head in 1 toss", "1/2", ["1/4", "1", "0"]),
+                ]
+                q, ans, dist = random.choice(trig10_bank)
+                return MathEngine._str_choices(q, ans, dist, "Class 10 Trig & Stats")
 
         # --- INTERMEDIATE (Class 11–12 Groups) ---
         elif level == "Inter - MPC (Calculus, Matrices & Trig)":
@@ -101,8 +131,8 @@ class MathEngine:
         elif level == "Inter - MEC / CEC (Commerce, Economics & Stats)":
             mode = random.choice(["si", "elasticity", "commerce"])
             if mode == "si":
-                p = random.choice()
-                r = random.choice()
+                p = random.choice([1000, 2000, 5000, 10000])
+                r = random.choice([5, 8, 10, 12])
                 t = random.randint(2, 4)
                 ans = int((p * r * t) / 100)
                 return MathEngine._int_choices(
@@ -111,8 +141,8 @@ class MathEngine:
                     "Financial Math",
                 )
             elif mode == "elasticity":
-                dq = random.choice()
-                dp = random.choice()
+                dq = random.choice([10, 20, 30, 40])
+                dp = random.choice([5, 10])
                 ans = int(dq / dp)
                 return MathEngine._int_choices(
                     f"Price Elasticity: %ΔQ={dq}%, %ΔP={dp}%", ans, "Economics"
@@ -127,6 +157,64 @@ class MathEngine:
                 return MathEngine._str_choices(
                     q, ans, dist, "Accountancy & Stats"
                 )
+        # --- COMPETITIVE EXAMS (EAPCET, JEE & GATE) ---
+        elif level == "Entrance - EAPCET / JEE (Vectors, Limits & Complex)":
+            mode = random.choice(["vectors", "complex", "formula_bank"])
+            if mode == "vectors":
+                a1, a2 = random.randint(1, 5), random.randint(1, 5)
+                b1, b2 = random.randint(1, 5), random.randint(1, 5)
+                ans = (a1 * b1) + (a2 * b2)
+                return MathEngine._int_choices(
+                    f"Dot product: ({a1}i + {a2}j) · ({b1}i + {b2}j)",
+                    ans,
+                    "Vector Algebra",
+                )
+            elif mode == "complex":
+                x, y = random.choice([(3, 4), (5, 12), (8, 15), (7, 24)])
+                ans = int((x**2 + y**2) ** 0.5)
+                return MathEngine._int_choices(
+                    f"Modulus |{x} + {y}i|", ans, "Complex Numbers"
+                )
+            else:
+                jee_bank = [
+                    ("lim (x→0) [sin(5x) / x]", "5", ["1", "0", "1/5"]),
+                    ("Value of i^4 + i^2 (where i = √-1)", "0", ["2", "-2", "1"]),
+                    ("Slope of line perpendicular to 2x + y = 5", "1/2", ["-2", "2", "-1/2"]),
+                    ("Dimensional formula of Force", "[MLT⁻²]", ["[ML²T⁻²]", "[MLT⁻¹]", "[MT⁻²]"]),
+                    ("Bond order of O₂ molecule", "2", ["1", "2.5", "3"]),
+                ]
+                q, ans, dist = random.choice(jee_bank)
+                return MathEngine._str_choices(q, ans, dist, "EAPCET / JEE Rapid")
+
+        elif level == "Competitive - GATE (Engg Math & Aptitude)":
+            mode = random.choice(["eigen", "aptitude", "gate_bank"])
+            if mode == "eigen":
+                a, d = random.randint(2, 9), random.randint(2, 9)
+                b, c = random.randint(1, 5), random.randint(1, 5)
+                ans = a + d
+                return MathEngine._int_choices(
+                    f"Sum of eigenvalues of [[{a}, {b}], [{c}, {d}]]",
+                    ans,
+                    "Linear Algebra",
+                )
+            elif mode == "aptitude":
+                n = random.randint(6, 12)
+                ans = (n * (n - 1)) // 2
+                return MathEngine._int_choices(
+                    f"Total handshakes among {n} people",
+                    ans,
+                    "General Aptitude",
+                )
+            else:
+                gate_bank = [
+                    ("Trace of a 3×3 Identity Matrix", "3", ["1", "0", "9"]),
+                    ("If P(A)=0.4, P(B)=0.5 (independent), P(A∩B)=", "0.2", ["0.9", "0.1", "0.45"]),
+                    ("Integrating factor of dy/dx + 2y = e^x", "e^(2x)", ["e^x", "2x", "e^(-2x)"]),
+                    ("Rank of a 3×3 zero matrix", "0", ["1", "3", "Undefined"]),
+                ]
+                q, ans, dist = random.choice(gate_bank)
+                return MathEngine._str_choices(q, ans, dist, "GATE Engg Math")
+
         # --- B.TECH (All Engineering Branches Separately) ---
         elif level == "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)":
             mode = random.choice(["binary", "mod", "theory"])
@@ -185,80 +273,53 @@ class MathEngine:
                     ("NAND gate output when A=1, B=1", "0", ["1", "High-Z", "X"]),
                 ]
                 q, ans, dist = random.choice(ece_bank)
-                return MathEngine._str_choices(q, ans, dist, "Electronics")
+                return MathEngine._str_choices(q, ans, dist, "Electronics & Digital")
 
-        elif level == "B.Tech - Mechanical (Thermo, Fluids & Machine Design)":
-            mode = random.choice(["force", "theory"])
-            if mode == "force":
-                m = random.randint(5, 25)
-                a = random.randint(2, 10)
-                ans = m * a
-                return MathEngine._int_choices(
-                    f"Force (N): Mass = {m}kg, Accel = {a}m/s²",
-                    ans,
-                    "Engg Mechanics",
-                )
+        elif level == "B.Tech - Mechanical (Thermo, Fluids & Mechanics)":
             mech_bank = [
-                ("Bernoulli's equation conserves", "Energy", ["Mass", "Momentum", "Viscosity"]),
-                ("Reynolds number > 4000 indicates", "Turbulent flow", ["Laminar flow", "Transitional", "Static"]),
-                ("Carnot efficiency depends only on", "Temperatures", ["Working fluid", "Pressure", "Volume"]),
-                ("Gear module (m) formula (D=pitch dia, T=teeth)", "D / T", ["T / D", "D × T", "πD / T"]),
+                ("Force (N) for mass 15 kg, accel 4 m/s²", "60 N", ["19 N", "3.75 N", "30 N"]),
+                ("Reynolds number > 4000 in pipe indicates", "Turbulent flow", ["Laminar flow", "Transitional", "Static"]),
+                ("First Law of Thermodynamics expresses", "Energy conservation", ["Entropy increase", "Absolute zero", "Heat transfer"]),
+                ("Power (W) if Torque = 50 N·m, ω = 20 rad/s", "1000 W", ["2.5 W", "70 W", "500 W"]),
             ]
             q, ans, dist = random.choice(mech_bank)
-            return MathEngine._str_choices(q, ans, dist, "Thermo & Fluids")
+            return MathEngine._str_choices(q, ans, dist, "Mechanical Core")
 
-        else:  # B.Tech - Civil (Structures, Geotech, Surveying & Concrete)
-            mode = random.choice(["beam_moment", "stress_dynamic", "theory"])
-            if mode == "beam_moment":
-                w = random.randint(4, 20)
-                l = random.randint(2, 8)
-                ans = int((w * (l**2)) / 2)
-                return MathEngine._int_choices(
-                    f"Max BM (kN·m) Cantilever: UDL={w}kN/m, L={l}m",
-                    ans,
-                    "Structural Analysis",
-                )
-            elif mode == "stress_dynamic":
-                area = random.randint(2, 10)
-                stress = random.randint(10, 50)
-                force = area * stress
-                return MathEngine._int_choices(
-                    f"Compressive Stress (MPa): Load={force}kN, Area={area}×10³mm²",
-                    stress,
-                    "Strength of Materials",
-                )
-            else:
-                civil_bank = [
-                    ("Nominal mix ratio for M20 concrete", "1 : 1.5 : 3", ["1 : 2 : 4", "1 : 1 : 2", "1 : 3 : 6"]),
-                    ("Bending moment at free end of cantilever", "0", ["WL", "WL/2", "WL²/2"]),
-                    ("Max BM of simply supported beam (point load W at center)", "WL / 4", ["WL / 2", "WL / 8", "WL² / 8"]),
-                    ("Whole Circle Bearing (WCB) of South", "180°", ["90°", "270°", "360°"]),
-                    ("Instrument used to measure horizontal & vertical angles", "Theodolite", ["Dumpy Level", "Planimeter", "Clinometer"]),
-                    ("Void ratio (e) in terms of porosity (n)", "n / (1 - n)", ["n / (1 + n)", "1 - n", "n × (1 - n)"]),
-                ]
-                q, ans, dist = random.choice(civil_bank)
-                return MathEngine._str_choices(
-                    q, ans, dist, "Geotech, Survey & Concrete"
-                )
+        elif level == "B.Tech - Civil (Structures, Concrete & Geotech)":
+            civil_bank = [
+                ("Max bending moment of cantilever (load P, len L)", "P·L", ["P·L / 2", "P·L / 4", "P·L² / 2"]),
+                ("Nominal mix ratio for M20 grade concrete", "1 : 1.5 : 3", ["1 : 2 : 4", "1 : 3 : 6", "1 : 1 : 2"]),
+                ("Compressive stress if Load = 200 kN, Area = 0.04 m²", "5000 kPa", ["8 kPa", "500 kPa", "2000 kPa"]),
+                ("Void ratio (e) in terms of porosity (n)", "n / (1 - n)", ["n / (1 + n)", "1 - n", "n · (1 - n)"]),
+            ]
+            q, ans, dist = random.choice(civil_bank)
+            return MathEngine._str_choices(q, ans, dist, "Civil Engineering")
+
+        else:
+            raise ValueError(f"Unknown academic stream: {level}")
 
     @staticmethod
     def _int_choices(
-        question: str, ans: int, topic: str, allow_neg: bool = False
+        question: str, answer: int, topic: str, allow_neg: bool = False
     ) -> MathProblem:
         distractors = set()
         while len(distractors) < 3:
-            offset = random.choice([-6, -4, -3, -2, -1, 1, 2, 3, 4, 6])
-            candidate = ans + offset
-            if (allow_neg or candidate >= 0) and candidate != ans:
-                distractors.add(candidate)
-        choices = [str(x) for x in list(distractors) + [ans]]
+            offset = random.choice([-5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 10])
+            fake = answer + offset
+            if fake != answer and (allow_neg or fake >= 0):
+                distractors.add(fake)
+        choices = [str(answer)] + [str(d) for d in distractors]
         random.shuffle(choices)
-        return MathProblem(question, str(ans), choices, topic)
+        return MathProblem(
+            question=question, answer=str(answer), choices=choices, topic=topic
+        )
 
     @staticmethod
     def _str_choices(
-        question: str, ans: str, distractors: List[str], topic: str
+        question: str, answer: str, distractors: List[str], topic: str
     ) -> MathProblem:
-        choices = list(distractors[:3]) + [ans]
+        choices = [answer] + distractors[:3]
         random.shuffle(choices)
-        return MathProblem(question, ans, choices, topic)
+        return MathProblem(
+            question=question, answer=answer, choices=choices, topic=topic
+        )
