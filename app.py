@@ -33,6 +33,8 @@ STREAMS = [
     "B.Tech - Civil (Structures, Concrete & Geotech)",
 ]
 
+WIN_OPTIONS = [3, 5, 7, 10]
+
 
 def init_session() -> None:
     if "stream" not in st.session_state:
@@ -119,8 +121,8 @@ with ctrl_col1:
 with ctrl_col2:
     st.session_state.win_threshold = st.selectbox(
         "Win Pulls",
-,
-        index=[3, 5, 7, 10].index(st.session_state.win_threshold),
+        WIN_OPTIONS,
+        index=WIN_OPTIONS.index(st.session_state.win_threshold),
         format_func=lambda x: f"Target: {x} Pulls",
         label_visibility="collapsed",
     )
