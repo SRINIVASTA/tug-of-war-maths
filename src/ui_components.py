@@ -1,167 +1,244 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 
-def inject_smartboard_css():
+def inject_kiosk_css() -> None:
+    """Injects responsive dark-mode CSS for Mobile, Tablet, and Laptop/Smartboard."""
     st.markdown(
         """
         <style>
-        /* Force pure black app background & compact zero-scroll layout */
+        /* --- BASE DARK THEME & RESET --- */
         .stApp {
-            background-color: #09090b !important;
-            color: #f8fafc !important;
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+        header[data-testid="stHeader"], #MainMenu, footer {
+            visibility: hidden;
+            height: 0;
         }
         .block-container {
-            padding-top: 0.6rem !important;
-            padding-bottom: 3.2rem !important;
-            max-width: 96% !important;
+            padding-top: clamp(0.5rem, 1.5vh, 1.25rem) !important;
+            padding-bottom: clamp(3.2rem, 6vh, 4.5rem) !important;
+            padding-left: clamp(0.5rem, 2vw, 2rem) !important;
+            padding-right: clamp(0.5rem, 2vw, 2rem) !important;
+            max-width: 100% !important;
         }
 
-        /* Hide Streamlit Header, Toolbar, Menu, and Default Footer */
-        [data-testid="stToolbar"],
-        [data-testid="stDecoration"],
-        [data-testid="stStatusWidget"],
-        #MainMenu,
-        footer,
-        [data-testid="manage-app-button"],
-        .stAppDeployButton,
-        div[class*="viewerBadge"],
-        button[title="Manage app"] {
-            visibility: hidden !important;
-            display: none !important;
-        }
-        header[data-testid="stHeader"] {
-            background: transparent !important;
-            height: 0px !important;
-        }
-
-        /* Keep sidebar toggle arrow visible in white for teachers */
-        [data-testid="stSidebarCollapsedControl"] {
-            visibility: visible !important;
+        /* --- FORCE SIDE-BY-SIDE SPLIT SCREEN ON ALL DEVICES (MOBILE, TAB, LAPTOP) --- */
+        [data-testid="stHorizontalBlock"] {
             display: flex !important;
-            color: #f8fafc !important;
-            z-index: 999999 !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: clamp(0.4rem, 1.5vw, 1.5rem) !important;
+            align-items: stretch !important;
+            width: 100% !important;
+        }
+        [data-testid="column"], [data-testid="stColumn"] {
+            flex: 1 1 0% !important;
+            min-width: 0 !important;
+            width: auto !important;
         }
 
-        /* Dark Smartboard Answer Buttons */
+        /* --- RESPONSIVE QUESTION CARD --- */
+        .question-box {
+            background: linear-gradient(145deg, #131b2e, #1e293b);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: clamp(0.6rem, 1.5vw, 1.25rem);
+            text-align: center;
+            font-size: clamp(0.95rem, 2.2vw, 1.75rem);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: clamp(0.5rem, 1.2vh, 1rem);
+            word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+        }
+
+        /* --- RESPONSIVE TOUCH ANSWER BUTTONS --- */
         div.stButton > button {
-            height: 56px;
-            font-size: 1.65rem !important;
-            font-weight: 800 !important;
-            border-radius: 12px !important;
-            background-color: #18181b !important;
-            color: #f8fafc !important;
-            border: 2px solid #3f3f46 !important;
-            margin-bottom: 4px !important;
-            transition: all 0.15s ease-in-out;
+            width: 100% !important;
+            min-height: clamp(2.6rem, 6.5vh, 4.4rem) !important;
+            font-size: clamp(0.85rem, 1.8vw, 1.45rem) !important;
+            font-weight: 700 !important;
+            border-radius: 10px !important;
+            border: 1px solid #475569 !important;
+            background-color: #1e293b !important;
+            color: #f1f5f9 !important;
+            padding: clamp(0.25rem, 0.8vw, 0.75rem) !important;
+            transition: transform 0.1s ease, background-color 0.15s ease !important;
+            white-space: normal !important;
+            line-height: 1.2 !important;
         }
         div.stButton > button:hover {
-            border-color: #3b82f6 !important;
-            background-color: #27272a !important;
+            background-color: #334155 !important;
+            border-color: #38bdf8 !important;
+            color: #ffffff !important;
+        }
+        div.stButton > button:active {
+            transform: scale(0.97) !important;
         }
 
-        /* Fixed Dark Bottom Branding Bar */
-        .custom-fixed-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
+        /* --- RESPONSIVE SVG ARENA CONTAINER --- */
+        .arena-wrapper {
             width: 100%;
-            background-color: #111114;
-            border-top: 1px solid #27272a;
-            padding: 7px 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 22px;
-            flex-wrap: wrap;
-            z-index: 99999;
-            font-family: sans-serif;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.6);
+            max-width: 1200px;
+            margin: 0 auto clamp(0.4rem, 1vh, 0.9rem) auto;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 14px;
+            padding: clamp(0.25rem, 0.8vw, 0.6rem);
+        }
+        .arena-wrapper svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: clamp(115px, 24vh, 230px);
+        }
+
+        /* --- MOBILE SPECIFIC (< 640px) --- */
+        @media (max-width: 640px) {
+            .stApp {
+                overflow-y: auto !important;
+            }
+            .brand-footer {
+                font-size: 0.68rem !important;
+                padding: 4px 8px !important;
+            }
+        }
+
+        /* --- TABLET SPECIFIC (641px - 1024px) --- */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            div.stButton > button {
+                min-height: 3.4rem !important;
+                font-size: 1.1rem !important;
+            }
+        }
+
+        /* --- LAPTOP / SMARTBOARD (> 1024px) --- */
+        @media (min-width: 1025px) {
+            .brand-footer {
+                font-size: 0.85rem !important;
+                padding: 7px 16px !important;
+            }
+        }
+
+        /* --- FIXED BOTTOM BRANDING BAR --- */
+        .brand-footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            z-index: 9999;
+            backdrop-filter: blur(6px);
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
+def render_arena_svg(
+    rope_pos: int = 0,
+    win_threshold: int = 5,
+    team_a_name: str = "TEAM ALPHA",
+    team_b_name: str = "TEAM OMEGA",
+) -> str:
+    """Generates and renders a responsive 6-player SVG tug-of-war arena."""
+    safe_threshold = max(1, win_threshold)
+    clamped_pos = max(-safe_threshold, min(safe_threshold, rope_pos))
+    # Map clamped rope position (-threshold to +threshold) to pixel shift (-150px to +150px)
+    shift_x = int((clamped_pos / safe_threshold) * 150)
+    center_x = 450 + shift_x
 
+    svg_html = f"""
+    <div class="arena-wrapper">
+      <svg viewBox="0 0 900 210" xmlns="http://w3.org" preserveAspectRatio="xMidYMid meet">
+        <!-- Ground & Center Victory Line -->
+        <line x1="40" y1="175" x2="860" y2="175" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+        <line x1="450" y1="35" x2="450" y2="185" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,6"/>
+        <text x="450" y="25" fill="#f87171" font-size="13" font-weight="bold" text-anchor="middle" font-family="sans-serif">
+          VICTORY LINE
+        </text>
 
-def _draw_player(x: float, color: str, facing_left: bool) -> str:
-    lean = -14 if facing_left else 14
-    arm_x = x + 16 if facing_left else x - 16
-    return f"""
-    <g transform="rotate({lean} {x} 85)">
-        <circle cx="{x}" cy="36" r="10" fill="{color}" />
-        <line x1="{x}" y1="46" x2="{x}" y2="74" stroke="{color}" stroke-width="6" stroke-linecap="round" />
-        <line x1="{x}" y1="54" x2="{arm_x}" y2="62" stroke="{color}" stroke-width="5" stroke-linecap="round" />
-        <line x1="{x}" y1="74" x2="{x - 10}" y2="96" stroke="{color}" stroke-width="5" stroke-linecap="round" />
-        <line x1="{x}" y1="74" x2="{x + 12}" y2="96" stroke="{color}" stroke-width="5" stroke-linecap="round" />
-    </g>
+        <!-- Team Labels -->
+        <text x="140" y="30" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">
+          {team_a_name}
+        </text>
+        <text x="760" y="30" fill="#fbbf24" font-size="16" font-weight="bold" text-anchor="middle" font-family="sans-serif">
+          {team_b_name}
+        </text>
+
+        <!-- Moving Rope & Players Group -->
+        <g transform="translate({shift_x}, 0)">
+          <!-- Main Tug Rope -->
+          <line x1="150" y1="125" x2="750" y2="125" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>
+          <!-- Center Flag Marker -->
+          <polygon points="450,125 440,152 460,152" fill="#ef4444"/>
+          <circle cx="450" cy="125" r="7" fill="#ffffff" stroke="#ef4444" stroke-width="3"/>
+
+          <!-- TEAM A (3 Leaning Players - Cyan) -->
+          <g stroke="#38bdf8" stroke-width="5" stroke-linecap="round" fill="none">
+            <!-- Player A1 -->
+            <circle cx="210" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
+            <line x1="210" y1="97" x2="195" y2="138"/>
+            <line x1="203" y1="112" x2="232" y2="125"/>
+            <line x1="195" y1="138" x2="180" y2="173"/>
+            <line x1="195" y1="138" x2="215" y2="173"/>
+
+            <!-- Player A2 -->
+            <circle cx="275" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
+            <line x1="275" y1="97" x2="260" y2="138"/>
+            <line x1="268" y1="112" x2="297" y2="125"/>
+            <line x1="260" y1="138" x2="245" y2="173"/>
+            <line x1="260" y1="138" x2="280" y2="173"/>
+
+            <!-- Player A3 -->
+            <circle cx="340" cy="85" r="12" fill="#0ea5e9" stroke="none"/>
+            <line x1="340" y1="97" x2="325" y2="138"/>
+            <line x1="333" y1="112" x2="362" y2="125"/>
+            <line x1="325" y1="138" x2="310" y2="173"/>
+            <line x1="325" y1="138" x2="345" y2="173"/>
+          </g>
+
+          <!-- TEAM B (3 Leaning Players - Amber) -->
+          <g stroke="#fbbf24" stroke-width="5" stroke-linecap="round" fill="none">
+            <!-- Player B1 -->
+            <circle cx="560" cy="85" r="12" fill="#f59e0b" stroke="none"/>
+            <line x1="560" y1="97" x2="575" y2="138"/>
+            <line x1="567" y1="112" x2="538" y2="125"/>
+            <line x1="575" y1="138" x2="555" y2="173"/>
+            <line x1="575" y1="138" x2="590" y2="173"/>
+
+            <!-- Player B2 -->
+            <circle cx="625" cy="85" r="12" fill="#f59e0b" stroke="none"/>
+            <line x1="625" y1="97" x2="640" y2="138"/>
+            <line x1="632" y1="112" x2="603" y2="125"/>
+            <line x1="640" y1="138" x2="620" y2="173"/>
+            <line x1="640" y1="138" x2="655" y2="173"/>
+
+            <!-- Player B3 -->
+            <circle cx="690" cy="85" r="12" fill="#f59e0b" stroke="none"/>
+            <line x1="690" y1="97" x2="705" y2="138"/>
+            <line x1="697" y1="112" x2="668" y2="125"/>
+            <line x1="705" y1="138" x2="685" y2="173"/>
+            <line x1="705" y1="138" x2="720" y2="173"/>
+          </g>
+        </g>
+      </svg>
+    </div>
     """
+    st.markdown(svg_html, unsafe_allow_html=True)
+    return svg_html
 
 
-def render_arena(rope_pos: int, win_limit: int, team_a: str, team_b: str):
-    clamped_pos = max(-win_limit, min(win_limit, rope_pos))
-    center_x = 450 + (clamped_pos / win_limit) * 180
-
-    team_a_offsets = (-95, -145, -195)
-    team_b_offsets = (95, 145, 195)
-
-    players_svg = ""
-    for offset in team_a_offsets:
-        players_svg += _draw_player(center_x + offset, "#3b82f6", facing_left=True)
-    for offset in team_b_offsets:
-        players_svg += _draw_player(center_x + offset, "#f97316", facing_left=False)
-
-    rope_start = center_x - 215
-    rope_end = center_x + 215
-
-    full_html = f"""
-    <div style="font-family: sans-serif; width:100%; box-sizing:border-box; background:#141417; border-radius:14px; padding:10px 16px; border:2px solid #27272a;">
-        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:17px; margin-bottom:2px;">
-            <span style="color:#60a5fa;">⬅️ {team_a}</span>
-            <span style="color:#a1a1aa;">🏁 CENTER / VICTORY LINE</span>
-            <span style="color:#fb923c;">{team_b} ➡️</span>
+def render_footer() -> None:
+    """Renders the fixed responsive bottom branding bar."""
+    st.markdown(
+        """
+        <div class="brand-footer">
+            🪢 <strong>Tug-of-War Maths &amp; Engineering Arena</strong> • Built by <strong>T A Srinivas (Srinivasta)</strong> • Tanakala AI Solutions
         </div>
-        <svg viewBox="0 0 900 108" style="width:100%; height:88px; display:block;">
-            <rect x="10" y="10" width="140" height="86" rx="10" fill="#172554" stroke="#1d4ed8" stroke-width="1.5" />
-            <text x="80" y="28" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">TEAM A WIN ZONE</text>
-            <rect x="750" y="10" width="140" height="86" rx="10" fill="#431407" stroke="#c2410c" stroke-width="1.5" />
-            <text x="820" y="28" text-anchor="middle" fill="#fdba74" font-size="12" font-weight="bold">TEAM B WIN ZONE</text>
-            <line x1="10" y1="96" x2="890" y2="96" stroke="#3f3f46" stroke-width="3" />
-            <line x1="450" y1="6" x2="450" y2="102" stroke="#71717a" stroke-width="4" stroke-dasharray="8,6" />
-            <line x1="{rope_start}" y1="60" x2="{rope_end}" y2="60" stroke="#d97706" stroke-width="8" stroke-linecap="round" />
-            {players_svg}
-            <polygon points="{center_x},60 {center_x + 20},44 {center_x},34" fill="#ef4444" />
-            <circle cx="{center_x}" cy="60" r="8" fill="#ef4444" />
-        </svg>
-    </div>
-    """
-    components.html(full_html, height=132)
-
-
-def render_footer():
-    footer_html = """
-    <div class="custom-fixed-footer">
-        <span style="color: #e2e8f0; font-size: 0.92rem; font-weight: 700;">
-            Built by T A Srinivas • Tanakala AI Solutions
-        </span>
-        <a href="https://www.linkedin.com/in/srinivas-t-a-557637119/" target="_blank" title="LinkedIn" style="text-decoration: none; color: #38bdf8; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.9rem;">
-            <svg xmlns="http://w3.org" width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8">
-                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-            </svg>
-            LinkedIn
-        </a>
-        <a href="mailto:tasrinivass@gmail.com" title="Email" style="text-decoration: none; color: #f87171; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.9rem;">
-            <svg xmlns="http://w3.org" width="18" height="18" viewBox="0 0 24 24" fill="#f87171">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
-            Email
-        </a>
-        <a href="https://srinivasta.github.io" target="_blank" title="Website" style="text-decoration: none; color: #60a5fa; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.9rem;">
-            <svg xmlns="http://w3.org" width="18" height="18" viewBox="0 0 24 24" fill="#60a5fa">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-            </svg>
-            Website
-        </a>
-    </div>
-    """
-    st.markdown(footer_html, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True,
+    )
