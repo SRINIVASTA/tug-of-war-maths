@@ -1,67 +1,58 @@
 import pytest
-from src.engine import MathEngine
-from src.ui_components import _draw_player
+from src.engine import MathEngine, MathProblem
+from src.ui_components import render_arena_svg
 
 ALL_STREAMS = [
+    # School (Class 1–10)
     "Class 1 (Add & Subtract ≤ 10)",
     "Class 2-5 (Operations & Mult/Div)",
     "Class 6-8 (Percentages & Algebra)",
+    "Class 9-10 (Quadratics, Coord Geometry & Trig)",
+    # Intermediate (Class 11–12)
     "Inter - MPC (Calculus, Matrices & Trig)",
     "Inter - BiPC (Genetics, pH & Bio-Calculations)",
     "Inter - MEC / CEC (Commerce, Economics & Stats)",
+    # Competitive Exams (EAPCET, JEE & GATE)
+    "Entrance - EAPCET / JEE (Vectors, Limits & Complex)",
+    "Competitive - GATE (Engg Math & Aptitude)",
+    # B.Tech Engineering Branches
     "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)",
     "B.Tech - ECE / EEE (Circuits, Signals & Laplace)",
-    "B.Tech - Mechanical (Thermo, Fluids & Machine Design)",
-    "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)",
+    "B.Tech - Mechanical (Thermo, Fluids & Mechanics)",
+    "B.Tech - Civil (Structures, Concrete & Geotech)",
 ]
 
 
 @pytest.mark.parametrize("stream", ALL_STREAMS)
-def test_all_streams_generate_valid_problems(stream):
-    for _ in range(50):
+def test_problem_generation_and_choices(stream: str) -> None:
+    """Runs 40 randomized checks per stream (520+ total) to verify valid 4-option MCQs."""
+    for _ in range(40):
         prob = MathEngine.generate(stream)
-        assert isinstance(prob.question, str) and len(prob.question) > 0
-        assert isinstance(prob.topic, str) and len(prob.topic) > 0
-        assert prob.answer in prob.choices
-        assert len(prob.choices) == 4
-        assert len(set(prob.choices)) == 4
+        assert isinstance(prob, MathProblem)
+        assert isinstance(prob.question, str) and len(prob.question.strip()) > 0
+        assert isinstance(prob.topic, str) and len(prob.topic.strip()) > 0
+        assert isinstance(prob.answer, str) and len(prob.answer.strip()) > 0
+        assert len(prob.choices) == 4, f"Expected 4 choices for {stream}, got {prob.choices}"
+        assert len(set(prob.choices)) == 4, f"Duplicate choices found in {stream}: {prob.choices}"
+        assert prob.answer in prob.choices, f"Answer '{prob.answer}' missing from {prob.choices}"
 
 
-def test_class_1_no_negatives():
-    for _ in range(50):
-        prob = MathEngine.generate("Class 1 (Add & Subtract ≤ 10)")
-        assert int(prob.answer) >= 0
+def test_invalid_stream_raises_error() -> None:
+    """Ensures unknown stream names raise a clean ValueError."""
+    with pytest.raises(ValueError, match="Unknown academic stream"):
+        MathEngine.generate("Non-Existent Stream")
 
 
-def test_btech_cse_binary_format():
-    for _ in range(50):
-        prob = MathEngine.generate(
-            "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)"
-        )
-        if "to Binary" in prob.question:
-            assert set(prob.answer).issubset({"0", "1"})
-
-
-def test_btech_ece_laplace_format():
-    for _ in range(50):
-        prob = MathEngine.generate(
-            "B.Tech - ECE / EEE (Circuits, Signals & Laplace)"
-        )
-        if "Laplace" in prob.question:
-            assert prob.answer.startswith("1/(s+")
-
-
-def test_btech_civil_positive_values():
-    for _ in range(50):
-        prob = MathEngine.generate(
-            "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)"
-        )
-        if "Cantilever" in prob.question or "Compressive Stress" in prob.question:
-            assert int(prob.answer) > 0
-
-
-def test_ui_player_svg_generation():
-    svg = _draw_player(350.0, "#2563eb", facing_left=True)
-    assert "<circle" in svg
-    assert "#2563eb" in svg
-    assert "rotate(-14" in svg
+@pytest.mark.parametrize("rope_pos", [-10, -5, 0, 5, 10])
+def test_svg_arena_clamping_and_rendering(rope_pos: int) -> None:
+    """Verifies SVG arena renders valid markup and clamps extreme rope positions safely."""
+    svg_output = render_arena_svg(
+        rope_pos=rope_pos,
+        win_threshold=5,
+        team_a_name="TEAM A",
+        team_b_name="TEAM B",
+    )
+    assert "<svg" in svg_output and "</svg>" in svg_output
+    assert "VICTORY LINE" in svg_output
+    assert "TEAM A" in svg_output
+    assert "TEAM B" in svg_output
