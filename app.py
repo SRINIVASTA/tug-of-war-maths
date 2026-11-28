@@ -2,176 +2,216 @@ import time
 import pandas as pd
 import streamlit as st
 from src.engine import MathEngine
-from src.ui_components import inject_smartboard_css, render_arena, render_footer
-
+from src.ui_components import inject_kiosk_css, render_arena_svg, render_footer
 
 st.set_page_config(
     page_title="Tug-of-War Maths & Engineering Arena",
     page_icon="🪢",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
-inject_smartboard_css()
 
-GRADE_OPTIONS = [
+inject_kiosk_css()
+
+STREAMS = [
+    # School (Class 1–10)
     "Class 1 (Add & Subtract ≤ 10)",
     "Class 2-5 (Operations & Mult/Div)",
     "Class 6-8 (Percentages & Algebra)",
+    "Class 9-10 (Quadratics, Coord Geometry & Trig)",
+    # Intermediate (Class 11–12)
     "Inter - MPC (Calculus, Matrices & Trig)",
     "Inter - BiPC (Genetics, pH & Bio-Calculations)",
     "Inter - MEC / CEC (Commerce, Economics & Stats)",
+    # Competitive Exams (EAPCET, JEE & GATE)
+    "Entrance - EAPCET / JEE (Vectors, Limits & Complex)",
+    "Competitive - GATE (Engg Math & Aptitude)",
+    # B.Tech Engineering Branches
     "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)",
     "B.Tech - ECE / EEE (Circuits, Signals & Laplace)",
-    "B.Tech - Mechanical (Thermo, Fluids & Machine Design)",
-    "B.Tech - Civil (Structures, Geotech, Surveying & Concrete)",
+    "B.Tech - Mechanical (Thermo, Fluids & Mechanics)",
+    "B.Tech - Civil (Structures, Concrete & Geotech)",
 ]
 
-if "initialized" not in st.session_state:
-    st.session_state.initialized = True
-    st.session_state.rope_pos = 0
-    st.session_state.win_limit = 5
-    st.session_state.team_a_name = "Blue Tigers"
-    st.session_state.team_b_name = "Orange Lions"
-    st.session_state.grade = GRADE_OPTIONS[0]
-    st.session_state.prob_a = MathEngine.generate(st.session_state.grade)
-    st.session_state.prob_b = MathEngine.generate(st.session_state.grade)
-    st.session_state.logs = []
-    st.session_state.q_start_a = time.time()
-    st.session_state.q_start_b = time.time()
 
-with st.sidebar:
-    st.header("🏫 Classroom / Lab Controls")
-    st.session_state.team_a_name = st.text_input(
-        "Team A Name", st.session_state.team_a_name
-    )
-    st.session_state.team_b_name = st.text_input(
-        "Team B Name", st.session_state.team_b_name
-    )
-
-    selected_grade = st.selectbox("Select Stream / Class", GRADE_OPTIONS)
-    st.session_state.win_limit = st.slider("Pulls to Win", 3, 10, 5)
-
-    if selected_grade != st.session_state.grade:
-        st.session_state.grade = selected_grade
-        st.session_state.prob_a = MathEngine.generate(selected_grade)
-        st.session_state.prob_b = MathEngine.generate(selected_grade)
-        st.session_state.q_start_a = time.time()
-        st.session_state.q_start_b = time.time()
-        st.rerun()
-
-    if st.button("🔄 Start New Round", use_container_width=True, type="primary"):
+def init_session() -> None:
+    if "stream" not in st.session_state:
+        st.session_state.stream = STREAMS[0]
+    if "win_threshold" not in st.session_state:
+        st.session_state.win_threshold = 5
+    if "rope_pos" not in st.session_state:
         st.session_state.rope_pos = 0
-        st.session_state.prob_a = MathEngine.generate(st.session_state.grade)
-        st.session_state.prob_b = MathEngine.generate(st.session_state.grade)
-        st.session_state.q_start_a = time.time()
-        st.session_state.q_start_b = time.time()
+    if "team_a_score" not in st.session_state:
+        st.session_state.team_a_score = 0
+    if "team_b_score" not in st.session_state:
+        st.session_state.team_b_score = 0
+    if "prob_a" not in st.session_state:
+        st.session_state.prob_a = MathEngine.generate(st.session_state.stream)
+        st.session_state.start_a = time.time()
+    if "prob_b" not in st.session_state:
+        st.session_state.prob_b = MathEngine.generate(st.session_state.stream)
+        st.session_state.start_b = time.time()
+    if "logs" not in st.session_state:
+        st.session_state.logs = []
+
+
+def reset_match(new_stream: str) -> None:
+    st.session_state.stream = new_stream
+    st.session_state.rope_pos = 0
+    st.session_state.team_a_score = 0
+    st.session_state.team_b_score = 0
+    st.session_state.prob_a = MathEngine.generate(new_stream)
+    st.session_state.prob_b = MathEngine.generate(new_stream)
+    st.session_state.start_a = time.time()
+    st.session_state.start_b = time.time()
+
+
+def handle_answer(team: str, selected: str) -> None:
+    now = time.time()
+    if team == "A":
+        prob = st.session_state.prob_a
+        elapsed = round(now - st.session_state.start_a, 2)
+        is_correct = selected == prob.answer
+        if is_correct:
+            st.session_state.rope_pos -= 1
+            st.session_state.team_a_score += 1
+        st.session_state.prob_a = MathEngine.generate(st.session_state.stream)
+        st.session_state.start_a = now
+    else:
+        prob = st.session_state.prob_b
+        elapsed = round(now - st.session_state.start_b, 2)
+        is_correct = selected == prob.answer
+        if is_correct:
+            st.session_state.rope_pos += 1
+            st.session_state.team_b_score += 1
+        st.session_state.prob_b = MathEngine.generate(st.session_state.stream)
+        st.session_state.start_b = now
+
+    st.session_state.logs.append(
+        {
+            "Team": f"Team {team}",
+            "Stream": st.session_state.stream,
+            "Topic": prob.topic,
+            "Question": prob.question,
+            "Selected": selected,
+            "Correct_Answer": prob.answer,
+            "Is_Correct": is_correct,
+            "Response_Time_Sec": elapsed,
+        }
+    )
+
+
+init_session()
+# --- TOP CONTROL BAR (Stream, Win Target, Reset & CSV Telemetry) ---
+ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([4, 2, 1.5, 2])
+
+with ctrl_col1:
+    chosen_stream = st.selectbox(
+        "Curriculum Stream",
+        STREAMS,
+        index=STREAMS.index(st.session_state.stream),
+        label_visibility="collapsed",
+    )
+    if chosen_stream != st.session_state.stream:
+        reset_match(chosen_stream)
         st.rerun()
 
-    if st.button("🧹 Clear Cache & Reset All", use_container_width=True):
-        st.cache_data.clear()
-        st.cache_resource.clear()
-        st.session_state.clear()
+with ctrl_col2:
+    st.session_state.win_threshold = st.selectbox(
+        "Win Pulls",
+,
+        index=[3, 5, 7, 10].index(st.session_state.win_threshold),
+        format_func=lambda x: f"Target: {x} Pulls",
+        label_visibility="collapsed",
+    )
+
+with ctrl_col3:
+    if st.button("🔄 Reset", use_container_width=True):
+        reset_match(st.session_state.stream)
         st.rerun()
 
-    st.divider()
+with ctrl_col4:
     if st.session_state.logs:
-        df_logs = pd.DataFrame(st.session_state.logs)
+        csv_data = pd.DataFrame(st.session_state.logs).to_csv(index=False).encode("utf-8")
         st.download_button(
-            "📊 Export Session Report (CSV)",
-            df_logs.to_csv(index=False).encode("utf-8"),
-            "tug_of_war_analytics.csv",
-            "text/csv",
+            label="📥 CSV Report",
+            data=csv_data,
+            file_name="tug_of_war_telemetry.csv",
+            mime="text/csv",
             use_container_width=True,
         )
-st.markdown(
-    "<h1 style='text-align: center; margin-bottom: 0;'>🪢 Tug-of-War Maths & Engineering Arena</h1>"
-    "<p style='text-align: center; color: #64748b; font-size: 1.1rem; margin-top: 4px;'>"
-    "Solve faster • Pull the rope • Win the classroom challenge!</p>",
-    unsafe_allow_html=True,
-)
-
-render_arena(
-    st.session_state.rope_pos,
-    st.session_state.win_limit,
-    st.session_state.team_a_name,
-    st.session_state.team_b_name,
-)
-
-if abs(st.session_state.rope_pos) >= st.session_state.win_limit:
-    winner = (
-        st.session_state.team_a_name
-        if st.session_state.rope_pos < 0
-        else st.session_state.team_b_name
-    )
-    st.balloons()
-    st.success(
-        f"🏆 **{winner.upper()} WINS!** Click 'Start New Round' in the sidebar."
-    )
-    st.stop()
-
-
-def handle_answer(team: str, chosen: str, problem, start_time: float):
-    elapsed = round(time.time() - start_time, 2)
-    is_correct = chosen == problem.answer
-    st.session_state.logs.append({
-        "Team": team,
-        "Stream": st.session_state.grade,
-        "Topic": problem.topic,
-        "Question": problem.question,
-        "Chosen": chosen,
-        "Correct": is_correct,
-        "Response_Time_Sec": elapsed,
-    })
-    if is_correct:
-        st.session_state.rope_pos += (
-            -1 if team == st.session_state.team_a_name else 1
-        )
-        if team == st.session_state.team_a_name:
-            st.session_state.prob_a = MathEngine.generate(
-                st.session_state.grade
-            )
-            st.session_state.q_start_a = time.time()
-        else:
-            st.session_state.prob_b = MathEngine.generate(
-                st.session_state.grade
-            )
-            st.session_state.q_start_b = time.time()
     else:
-        st.toast(f"❌ {team}: Try again!", icon="⚠️")
+        st.button("📥 CSV (0)", disabled=True, use_container_width=True)
 
+# --- DYNAMIC SVG TUG-OF-WAR ARENA ---
+render_arena_svg(
+    rope_pos=st.session_state.rope_pos,
+    win_threshold=st.session_state.win_threshold,
+    team_a_name=f"TEAM A ({st.session_state.team_a_score})",
+    team_b_name=f"TEAM B ({st.session_state.team_b_score})",
+)
 
-col1, col_sep, col2 = st.columns([5, 0.5, 5])
+# --- VICTORY CHECK OR SPLIT-SCREEN GAMEPLAY ---
+threshold = st.session_state.win_threshold
+if st.session_state.rope_pos <= -threshold:
+    st.success("🏆 **TEAM A WINS THE TUG-OF-WAR!** Click **Reset** to start a new round.")
+elif st.session_state.rope_pos >= threshold:
+    st.success("🏆 **TEAM B WINS THE TUG-OF-WAR!** Click **Reset** to start a new round.")
+else:
+    col_a, col_b = st.columns(2)
 
-with col1:
-    st.markdown(f"### 🔵 {st.session_state.team_a_name}")
-    st.caption(f"Topic: {st.session_state.prob_a.topic}")
-    st.markdown(f"## `{st.session_state.prob_a.question}`")
-    btn_cols_a = st.columns(2)
-    for idx, val in enumerate(st.session_state.prob_a.choices):
-        if btn_cols_a[idx % 2].button(
-            val, key=f"a_{idx}", use_container_width=True
-        ):
-            handle_answer(
-                st.session_state.team_a_name,
-                val,
-                st.session_state.prob_a,
-                st.session_state.q_start_a,
-            )
-            st.rerun()
+    # TEAM A PANEL
+    with col_a:
+        pa = st.session_state.prob_a
+        st.markdown(
+            f'<div class="question-box">🔵 {pa.question}</div>',
+            unsafe_allow_html=True,
+        )
+        a_r1c1, a_r1c2 = st.columns(2)
+        with a_r1c1:
+            if st.button(pa.choices[0], key="a_opt_0", use_container_width=True):
+                handle_answer("A", pa.choices[0])
+                st.rerun()
+        with a_r1c2:
+            if st.button(pa.choices[1], key="a_opt_1", use_container_width=True):
+                handle_answer("A", pa.choices[1])
+                st.rerun()
 
-with col2:
-    st.markdown(f"### 🟠 {st.session_state.team_b_name}")
-    st.caption(f"Topic: {st.session_state.prob_b.topic}")
-    st.markdown(f"## `{st.session_state.prob_b.question}`")
-    btn_cols_b = st.columns(2)
-    for idx, val in enumerate(st.session_state.prob_b.choices):
-        if btn_cols_b[idx % 2].button(
-            val, key=f"b_{idx}", use_container_width=True
-        ):
-            handle_answer(
-                st.session_state.team_b_name,
-                val,
-                st.session_state.prob_b,
-                st.session_state.q_start_b,
-            )
-            st.rerun()
+        a_r2c1, a_r2c2 = st.columns(2)
+        with a_r2c1:
+            if st.button(pa.choices[2], key="a_opt_2", use_container_width=True):
+                handle_answer("A", pa.choices[2])
+                st.rerun()
+        with a_r2c2:
+            if st.button(pa.choices[3], key="a_opt_3", use_container_width=True):
+                handle_answer("A", pa.choices[3])
+                st.rerun()
+
+    # TEAM B PANEL
+    with col_b:
+        pb = st.session_state.prob_b
+        st.markdown(
+            f'<div class="question-box">🟡 {pb.question}</div>',
+            unsafe_allow_html=True,
+        )
+        b_r1c1, b_r1c2 = st.columns(2)
+        with b_r1c1:
+            if st.button(pb.choices[0], key="b_opt_0", use_container_width=True):
+                handle_answer("B", pb.choices[0])
+                st.rerun()
+        with b_r1c2:
+            if st.button(pb.choices[1], key="b_opt_1", use_container_width=True):
+                handle_answer("B", pb.choices[1])
+                st.rerun()
+
+        b_r2c1, b_r2c2 = st.columns(2)
+        with b_r2c1:
+            if st.button(pb.choices[2], key="b_opt_2", use_container_width=True):
+                handle_answer("B", pb.choices[2])
+                st.rerun()
+        with b_r2c2:
+            if st.button(pb.choices[3], key="b_opt_3", use_container_width=True):
+                handle_answer("B", pb.choices[3])
+                st.rerun()
+
 render_footer()
