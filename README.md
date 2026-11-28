@@ -85,8 +85,7 @@ flowchart TD
 
 Students, parents, and teachers can install this directly onto any **Android** or **iOS** home screen safely without downloading external `.apk` files:
 
-1. Open the live link in **Google Chrome** (Android) or **Safari** (iOS):
-   `[https://streamlit.app](https://tug-of-war-maths-g4xuhkbc5jggrcgvcskg9f.streamlit.app/)`
+1. Open the live link in **Google Chrome** (Android) or **Safari** (iOS): https://tug-of-war-maths-g4xuhkbc5jggrcgvcskg9f.streamlit.app/
 2. Tap the **3 dots (`⋮`)** in Chrome (or **Share (`↑`)** in Safari).
 3. Tap **"Install and create shortcut"** ➔ **"Install"** (or **"Add to Home Screen"**).
 
