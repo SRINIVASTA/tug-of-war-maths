@@ -13,27 +13,23 @@ st.set_page_config(
 
 inject_kiosk_css()
 
-STREAMS = [
-    # School (Class 1–10)
+STREAMS = (
     "Class 1 (Add & Subtract ≤ 10)",
     "Class 2-5 (Operations & Mult/Div)",
     "Class 6-8 (Percentages & Algebra)",
     "Class 9-10 (Quadratics, Coord Geometry & Trig)",
-    # Intermediate (Class 11–12)
     "Inter - MPC (Calculus, Matrices & Trig)",
     "Inter - BiPC (Genetics, pH & Bio-Calculations)",
     "Inter - MEC / CEC (Commerce, Economics & Stats)",
-    # Competitive Exams (EAPCET, JEE & GATE)
     "Entrance - EAPCET / JEE (Vectors, Limits & Complex)",
     "Competitive - GATE (Engg Math & Aptitude)",
-    # B.Tech Engineering Branches
     "B.Tech - CSE / IT (Discrete Math, Binary & Big-O)",
     "B.Tech - ECE / EEE (Circuits, Signals & Laplace)",
     "B.Tech - Mechanical (Thermo, Fluids & Mechanics)",
     "B.Tech - Civil (Structures, Concrete & Geotech)",
-]
+)
 
-WIN_OPTIONS = [3, 5, 7, 10]
+WIN_OPTIONS = (3, 5, 7, 10)
 
 
 def init_session() -> None:
@@ -47,6 +43,8 @@ def init_session() -> None:
         st.session_state.team_a_score = 0
     if "team_b_score" not in st.session_state:
         st.session_state.team_b_score = 0
+    if "celebrated" not in st.session_state:
+        st.session_state.celebrated = False
     if "prob_a" not in st.session_state:
         st.session_state.prob_a = MathEngine.generate(st.session_state.stream)
         st.session_state.start_a = time.time()
@@ -62,6 +60,7 @@ def reset_match(new_stream: str) -> None:
     st.session_state.rope_pos = 0
     st.session_state.team_a_score = 0
     st.session_state.team_b_score = 0
+    st.session_state.celebrated = False
     st.session_state.prob_a = MathEngine.generate(new_stream)
     st.session_state.prob_b = MathEngine.generate(new_stream)
     st.session_state.start_a = time.time()
@@ -89,6 +88,11 @@ def handle_answer(team: str, selected: str) -> None:
         st.session_state.prob_b = MathEngine.generate(st.session_state.stream)
         st.session_state.start_b = now
 
+    if is_correct:
+        st.toast(f"✅ Team {team}: Correct! (+1 Pull)", icon="🔥")
+    else:
+        st.toast(f"❌ Team {team}: Wrong! Correct: {prob.answer}", icon="⚠️")
+
     st.session_state.logs.append(
         {
             "Team": f"Team {team}",
@@ -104,8 +108,8 @@ def handle_answer(team: str, selected: str) -> None:
 
 
 init_session()
-# --- TOP CONTROL BAR (Stream, Win Target, Reset & CSV Telemetry) ---
-ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns([4, 2, 1.5, 2])
+# --- TOP CONTROL BAR ---
+ctrl_col1, ctrl_col2, ctrl_col3, ctrl_col4 = st.columns((4, 2, 1.5, 2))
 
 with ctrl_col1:
     chosen_stream = st.selectbox(
@@ -153,12 +157,18 @@ render_arena_svg(
     team_b_name=f"TEAM B ({st.session_state.team_b_score})",
 )
 
-# --- VICTORY CHECK OR SPLIT-SCREEN GAMEPLAY ---
+# --- VICTORY CHECK WITH BALLOONS OR SPLIT-SCREEN GAMEPLAY ---
 threshold = st.session_state.win_threshold
 if st.session_state.rope_pos <= -threshold:
-    st.success("🏆 **TEAM A WINS THE TUG-OF-WAR!** Click **Reset** to start a new round.")
+    if not st.session_state.celebrated:
+        st.balloons()
+        st.session_state.celebrated = True
+    st.success("🏆 **TEAM A WINS THE TUG-OF-WAR!** Click **Reset** to play again.")
 elif st.session_state.rope_pos >= threshold:
-    st.success("🏆 **TEAM B WINS THE TUG-OF-WAR!** Click **Reset** to start a new round.")
+    if not st.session_state.celebrated:
+        st.balloons()
+        st.session_state.celebrated = True
+    st.success("🏆 **TEAM B WINS THE TUG-OF-WAR!** Click **Reset** to play again.")
 else:
     col_a, col_b = st.columns(2)
 
